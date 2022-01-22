@@ -1,0 +1,34 @@
+version: "3.7"
+
+services:
+  app:
+    build:
+      context: ./
+    command: bash -c "uvicorn app.main:app --reload --host 0.0.0.0 --port 8080"
+    environment:
+      - ENVIRONMENT=test
+      - PYTHONUNBUFFERED
+      - DEBUG
+      - PORT
+      - AWS_ACCESS_KEY_ID=anything
+      - AWS_SECRET_ACCESS_KEY=anything
+    expose:
+      - 8080
+    ports:
+      - 8080:8080
+    volumes:
+      - ./:/app
+
+  dynamodb:
+    image: amazon/dynamodb-local
+    expose:
+      - 8000
+    ports:
+      - 8000:8000
+
+  dynamodb-admin:
+    image: aaronshaf/dynamodb-admin
+    environment:
+      DYNAMO_ENDPOINT: http://dynamodb:8000
+    ports:
+      - 8001:8001
